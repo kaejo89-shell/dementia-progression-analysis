@@ -2,11 +2,13 @@
 import os
 import argparse
 import numpy as np
-from keras.preprocessing.image import ImageDataGenerator, img_to_array, load_img
+# from keras.preprocessing.image import ImageDataGenerator, img_to_array, load_img
+# from keras.src.legacy.preprocessing.image import ImageDataGenerator,img_to_array, load_img
+from tensorflow.keras.utils import img_to_array,load_img
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense
 from keras import applications
-from keras.utils.np_utils import to_categorical
+from keras.utils import to_categorical
 import matplotlib.pyplot as plt
 import math
 import cv2
@@ -24,7 +26,7 @@ def predict(image_path):
     print("Predicting " + image_path)
     filename = image_path.split('/')[len(image_path.split('/'))-1]
     # load the class_indices saved in the earlier step
-    class_dictionary = np.load('oasis_cross-sectional_class_indices' + '_' + data_type + '.npy').item()
+    class_dictionary = np.load('trained_models/oasis_cross-sectional_class_indices' + '_' + data_type + '.npy',allow_pickle=True).item()
 
     num_classes = len(class_dictionary)
 
@@ -59,13 +61,15 @@ def predict(image_path):
 
     # use the bottleneck prediction on the top model to get the final
     # classification
-    probs = model.predict_proba(bottleneck_prediction)
-    classes = model.predict_classes(bottleneck_prediction)
+    probs = model.predict(bottleneck_prediction)
+    
+    # classes = model.predict_classes(bottleneck_prediction)
     # print(str(classes))
     # print(str(probs))
-    class_predicted = model.predict_classes(bottleneck_prediction)
+    class_predicted = np.argmax(probs,-1)
+    # model.predict_classes(bottleneck_prediction)
     # print(str(class_predicted))
-    probabilities = model.predict_proba(bottleneck_prediction)
+    probabilities = probs
 
     inID = class_predicted[0]
     # print()
@@ -104,7 +108,7 @@ if __name__ == '__main__':
         img_width, img_height = 176, 208
     train_data_dir = train_data_dir + "/" + data_type
     validation_data_dir = validation_data_dir + "/" + data_type
-    top_model_weights_path = "oasis_cross-sectional" + "_" + data_type + ".h5"
+    top_model_weights_path = "trained_models/oasis_cross-sectional" + "_" + data_type + ".h5"
     path = args["file"]
     send_from_dir(path)
     cv2.destroyAllWindows()

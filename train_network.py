@@ -5,11 +5,13 @@
 import os
 import argparse
 import numpy as np
-from keras.preprocessing.image import ImageDataGenerator, img_to_array, load_img
+# from keras.preprocessing.image import ImageDataGenerator, img_to_array, load_img
+from keras.src.legacy.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.utils import img_to_array,load_img
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense
 from keras import applications
-from keras.utils.np_utils import to_categorical
+from keras.utils import to_categorical
 import matplotlib.pyplot as plt
 import math
 import cv2
@@ -116,7 +118,8 @@ def train_top_model():
     validation_labels = generator_top.classes
     validation_labels = to_categorical(
         validation_labels, num_classes=num_classes)
-
+    
+    # Make improvement to the model definition here later
     model = Sequential()
     model.add(Flatten(input_shape=train_data.shape[1:]))
     model.add(Dense(256, activation='relu'))

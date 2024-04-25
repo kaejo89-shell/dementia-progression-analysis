@@ -76,12 +76,13 @@ def check_against_csv(each, subfolder_name, subfolder_path):
                         output_path = data_input_path + "/" + each + "/" + output_type
                         for individual_file in os.listdir(output_path):
                             is_img = check_is_img(individual_file)
+                            record_cdr = float(record['CDR']) if record['CDR'] !="" else -10000
                             if is_img:
                                 individual_file_path = output_path + "/" + individual_file
                                 # print(individual_file_path, record['CDR'])
-                                if record['CDR'] is "0":
+                                if record_cdr==0.0:
                                     build_no_dementia_folder(individual_file_path, record, output_type)
-                                if record['CDR'] is "0.5":
+                                if record_cdr==0.5:
                                     build_mild_dementia_folder(individual_file_path, record, output_type)
                                 # Because we don't have a lot of training data, let's combine slight and moderate dementia levels
                                 # into just the moderate classification.
@@ -90,17 +91,17 @@ def check_against_csv(each, subfolder_name, subfolder_path):
                                            combination option can be used.")
                                     exit()
                                 if combine_moderate_dementia and not combine_all_dementia:
-                                    if (record['CDR'] is "2" or record['CDR'] is "1"):
+                                    if (record_cdr==2.0 or record_cdr== 1.0):
                                         build_moderate_dementia_folder(individual_file_path, record, output_type)
                                 if combine_all_dementia and not combine_moderate_dementia:
-                                    if (record['CDR'] is "2" or record['CDR'] is "1" or record['CDR'] is ".5"):
+                                    if (record_cdr in [2.0,1.0,0.5]):
                                         build_moderate_dementia_folder(individual_file_path, record, output_type)
                                 if not combine_moderate_dementia and not combine_all_dementia:
-                                    if record['CDR'] is "1":
+                                    if record_cdr== 1.0:
                                         build_slight_dementia_folder(individual_file_path, record, output_type)
-                                    if record['CDR'] is "2":
+                                    if record_cdr ==2.0:
                                         build_moderate_dementia_folder(individual_file_path, record, output_type)
-                                if record['CDR'] is "":
+                                if record_cdr==-10000:
                                     build_unclassified_dementia_folder(individual_file_path, record, output_type)
 
 def crossreference_files(data_input_path):
