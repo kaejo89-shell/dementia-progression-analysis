@@ -65,7 +65,7 @@ def check_against_csv(each, subfolder_name, subfolder_path):
         reader = csv.DictReader(csvfile)
         for record in reader:
             # print(record['ID'], record['Age'], record['M/F'], record['CDR'])
-            if record['ID'] == each:
+            if record['Subject ID'] == each:
                 # print(record['ID'], subfolder_name, record['CDR'])
                 for _each in os.listdir(subfolder_path):
                     # print(_each)
